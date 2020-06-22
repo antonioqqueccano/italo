@@ -1,5 +1,6 @@
 package entidad;
 
+//Sede norte estuvo aqui
 public class Opcion {
 
 	private int idOpcion;
