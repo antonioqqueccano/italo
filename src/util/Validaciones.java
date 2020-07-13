@@ -13,4 +13,5 @@ public class Validaciones {
 	public static final String SEDE = "\\d{1,2}";
 	public static final String ANNO = "\\d{4}";
 	public static final String RUC = "\\d{11}";
+	public static final String ISO = "[a-zA-ZáéíóúñüÁÉÍÓÚÑÜ\\s]{2}";
 }

@@ -11,8 +11,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import model.ModelUsuario;
 import entidad.Usuario;
+import model.UsuarioModel;
+import util.DatosGlobales;
 
 
 @SuppressWarnings("serial")
@@ -22,10 +23,7 @@ public class FrmLogin extends JDialog implements ActionListener{
 	public JTextField txtLogin;
 	public JPasswordField txtClave;
 	public JButton btnEnviar, btnLimpiar;
-	
-	public static int idUsuario =0;
-	
-	private ModelUsuario model = new ModelUsuario();
+	private UsuarioModel model = new UsuarioModel();
 	public FrmPrincipal frm;
 	
 	public FrmLogin(FrmPrincipal frm) {
@@ -40,7 +38,7 @@ public class FrmLogin extends JDialog implements ActionListener{
 			lblLogin.setBounds(50,15,100,25);
 			add(lblLogin);
 			
-			txtLogin = new JTextField();
+			txtLogin = new JTextField("luis");
 			txtLogin.setBounds(160,15,100,25);
 			txtLogin.addActionListener(this);
 			add(txtLogin);
@@ -49,7 +47,7 @@ public class FrmLogin extends JDialog implements ActionListener{
 			lblClave.setBounds(50,40,100,25);
 			add(lblClave);
 			
-			txtClave = new JPasswordField();
+			txtClave = new JPasswordField("luis");
 			txtClave.addActionListener(this);
 			txtClave.setBounds(160,40,100,25);
 			add(txtClave);
@@ -78,8 +76,9 @@ public class FrmLogin extends JDialog implements ActionListener{
 				
 				Usuario bean =  model.valida(login, clave);
 				
+				
 				if(bean!= null){
-					idUsuario = bean.getIdUsuario();
+					DatosGlobales.ID_USUARIO = bean.getIdUsuario();
 					frm.setVisible(true);
 					this.setVisible(false);
 					frm.muestraOpciones();

@@ -1,215 +1,261 @@
 package gui;
+
 import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.List;
-import javax.swing.JButton;
+
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import java.awt.Color;
+import javax.swing.JTextField;
+import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+
 import entidad.Pais;
-import model.ModelPais;
+import model.PaisModel;
 import util.Validaciones;
-import javax.swing.ImageIcon;
-public class FrmCrudPais extends JInternalFrame implements ActionListener,
-MouseListener {
-/**
-*
-*/
-private static final long serialVersionUID = 1L;
-private JTextField txtPais;
-private JTable table;
-private JButton btnAgregar;
-private int selectedID = -1;
-private JButton btnActualizar;
-private JButton btnEliminar;
-/**
-* Launch the application.
-*/
-public static void main(String[] args) {
-EventQueue.invokeLater(new Runnable() {
-public void run() {
-try {
-	FrmCrudPais frame = new FrmCrudPais();
-frame.setVisible(true);
-} catch (Exception e) {
-e.printStackTrace();
-}
-}
-});
-}
-/**
-* Create the frame.
-*/
-public FrmCrudPais() {
-setBounds(100, 100, 726, 528);
-getContentPane().setLayout(null);
-JLabel lblNewLabel = new JLabel("Mantenimiento de Pais");
-lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 19));
-lblNewLabel.setBounds(235, 24, 284, 39);
-getContentPane().add(lblNewLabel);
-JLabel lblNewLabel_1_1 = new JLabel("Pais");
-lblNewLabel_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-lblNewLabel_1_1.setBounds(90, 117, 86, 19);
-getContentPane().add(lblNewLabel_1_1);
-txtPais = new JTextField();
-txtPais.setBounds(201, 119, 278, 20);
-getContentPane().add(txtPais);
-txtPais.setColumns(10);
-btnAgregar = new JButton("AGREGAR");
-btnAgregar.addActionListener(this);
-btnAgregar.setFont(new Font("Tahoma", Font.PLAIN, 14));
-btnAgregar.setBounds(543, 106, 115, 23);
-getContentPane().add(btnAgregar);
-btnActualizar = new JButton("ACTUALIZAR");
-btnActualizar.addActionListener(this);
-btnActualizar.setFont(new Font("Tahoma", Font.PLAIN, 14));
-btnActualizar.setBounds(543, 136, 115, 23);
-getContentPane().add(btnActualizar);
-btnEliminar = new JButton("ELIMINAR");
-btnEliminar.addActionListener(this);
-btnEliminar.setFont(new Font("Tahoma", Font.PLAIN, 14));
-btnEliminar.setBounds(543, 176, 115, 23);
-getContentPane().add(btnEliminar);
-JScrollPane scrollPane = new JScrollPane();
-scrollPane.setBounds(45, 226, 613, 197);
-getContentPane().add(scrollPane);
-table = new JTable();
-table.addMouseListener(this);
-table.setModel(new DefaultTableModel(
-new Object[][] {
-},
-new String[] {
-"Pais"
-}
-));
-scrollPane.setViewportView(table);
-listarPais();
-}
-public void actionPerformed(ActionEvent e) {
-if (e.getSource() == btnEliminar) {
-actionPerformedBtnEliminarJButton(e);
-}
-if (e.getSource() == btnActualizar) {
-actionPerformedBtnActualizarJButton(e);
-}
-if (e.getSource() == btnAgregar) {
-actionPerformedBtnAgregarJButton(e);
-}
-}
-protected void actionPerformedBtnAgregarJButton(ActionEvent e) {
-if (selectedID == -1) {
 
-String pais = txtPais.getText();
- if (!pais.matches(Validaciones.TEXTO)) {
-message("El pais debe ser entre 2 a 20 caracteres");
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseListener;
+import java.util.List;
+import java.awt.event.MouseEvent;
+import javax.swing.JFrame;
 
-Pais Pais = new Pais();
+public class FrmCrudPais extends JInternalFrame implements ActionListener, MouseListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JTextField txtIso;
+	private JTextField txtNombre;
+	private JTable table;
+	private JButton btnRegistrar;
+	private JButton btnActualizar;
+	private JButton btnEliminar;
+	private int idSeleccionado = -1;
 
-Pais.setPais(pais);
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					FrmCrudPais frame = new FrmCrudPais();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
-ModelPais PaisModel = new ModelPais();
-int response =
-PaisModel.insertarPais(Pais);
-if (response > 0) {
-clearInputs();
-listarPais();
-selectedID = -1;
-message("Pais insertado correctamente");
-} else {
-message("Error en el registro");
-}
-}
-} else {
-clearInputs();
-selectedID = -1;
-}
-}
-protected void actionPerformedBtnActualizarJButton(ActionEvent e) {
-if (selectedID == -1) {
-message("Seleccione una fila");
-} else {
-String pais = txtPais.getText();
- if (!pais.matches(Validaciones.TEXTO)) {
-message("El pais debe ser entre 2 a 20 caracteres");
+	/**
+	 * Create the frame.
+	 */
+	public FrmCrudPais() {
+		setTitle("Mantenimiento Pais");
+		setMaximizable(true);
+		setIconifiable(true);
+		setClosable(true);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setBounds(100, 100, 587, 346);
+		getContentPane().setLayout(null);
+		
+		JLabel lblTitulo = new JLabel("                             MANTENIMIENTO DE PAIS ");
+		lblTitulo.setBackground(Color.LIGHT_GRAY);
+		lblTitulo.setForeground(Color.BLACK);
+		lblTitulo.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblTitulo.setBounds(85, 11, 414, 37);
+		getContentPane().add(lblTitulo);
+		
+		JLabel lblIso = new JLabel("ISO");
+		lblIso.setFont(new Font("Arial Narrow", Font.BOLD, 13));
+		lblIso.setBounds(39, 59, 46, 14);
+		getContentPane().add(lblIso);
+		
+		JLabel lblNombre = new JLabel("NOMBRE");
+		lblNombre.setFont(new Font("Arial Narrow", Font.BOLD, 13));
+		lblNombre.setBounds(39, 84, 60, 14);
+		getContentPane().add(lblNombre);
+		
+		txtIso = new JTextField();
+		txtIso.setBounds(109, 57, 105, 20);
+		getContentPane().add(txtIso);
+		txtIso.setColumns(10);
+		
+		txtNombre = new JTextField();
+		txtNombre.setBounds(109, 82, 105, 20);
+		getContentPane().add(txtNombre);
+		txtNombre.setColumns(10);
+		
+		btnRegistrar = new JButton("Registrar");
+		btnRegistrar.addActionListener(this);
+		btnRegistrar.setBounds(49, 130, 129, 32);
+		getContentPane().add(btnRegistrar);
+		
+		btnActualizar = new JButton("Actualizar");
+		btnActualizar.addActionListener(this);
+		btnActualizar.setBounds(49, 185, 129, 32);
+		getContentPane().add(btnActualizar);
+		
+		btnEliminar = new JButton("Eliminar");
+		btnEliminar.addActionListener(this);
+		btnEliminar.setBounds(49, 243, 129, 32);
+		getContentPane().add(btnEliminar);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(248, 59, 313, 246);
+		getContentPane().add(scrollPane);
+		
+		
+		table = new JTable();
+		table.addMouseListener(this);
+		table.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"idPais", "Iso", "Nombre"
+			}
+		));
+		scrollPane.setViewportView(table);
+		
+		listaPais();
+	}
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnEliminar) {
+			actionPerformedBtnEliminarJButton(e);
+		}
+		if (e.getSource() == btnActualizar) {
+			actionPerformedBtnActualizarJButton(e);
+		}
+		if (e.getSource() == btnRegistrar) {
+			actionPerformedBtnRegistrarJButton(e);
+		}
+	}
+	protected void actionPerformedBtnRegistrarJButton(ActionEvent e) {
+		String iso = txtIso.getText().trim();
+		String nom = txtNombre.getText().trim();
+	
+		if (iso.matches(Validaciones.ISO) == false){
+			mensaje("La ISO es solo de 2 caracteres");
+		}else if (nom.matches(Validaciones.TEXTO) == false){
+			mensaje("El nombre es de 4 a 40 caracteres");
+		}else{
+				Pais obj = new Pais();
+				obj.setIso(iso);
+				obj.setNombre(nom);
+				
+				PaisModel model = new PaisModel();
+				int salida = model.insertaPais(obj);
+				if (salida>0) {
+					limpiarCajasTexto();
+					listaPais();
+					idSeleccionado = -1;
+					mensaje("Se envió correctamente");
+					}else {
+					mensaje("Error en el registro");
+					}
+		}
+	}
+	protected void actionPerformedBtnActualizarJButton(ActionEvent e) {
+		if (idSeleccionado == -1) {
+			mensaje("Debe seleccionar una fila");
+		}else {
+			String iso = txtIso.getText().trim();
+			String nom = txtNombre.getText().trim();
 
-Pais Pais = new Pais();
-Pais.setIdPais(selectedID);
-Pais.setPais(pais);
-ModelPais UM = new ModelPais();
-int response = UM.actualizarPais(Pais);
-if (response > 0) {
-clearInputs();
-listarPais();
-selectedID = -1;
-message("Se actualizó correctamente el pais");
-} else {
-message("Error al actualizar el Pais");
-}
-}
-}
-}
-protected void actionPerformedBtnEliminarJButton(ActionEvent e) {
-if (selectedID == -1) {
-message("Debe seleccionar una fila");
-} else {
-ModelPais PaisModel = new ModelPais();
-int response = PaisModel.eliminarPais(selectedID);
-if (response > 0) {
-listarPais();
-clearInputs();
-selectedID = -1;
-message("Se eliminó correctamente el pais");
-} else {
-message("Error al eliminar");
-}
-}
-}
-public void mouseClicked(MouseEvent arg0) {
-if (arg0.getSource() == table) {
-mouseClickedTableJTable(arg0);
-}
-}
-public void mouseEntered(MouseEvent arg0) {
-}
-public void mouseExited(MouseEvent arg0) {
-}
-public void mousePressed(MouseEvent arg0) {
-}
-public void mouseReleased(MouseEvent arg0) {
-}
-protected void mouseClickedTableJTable(MouseEvent e) {
-int row = table.getSelectedRow();
-selectedID = (int) table.getValueAt(row, 0);
-String pais = (String) table.getValueAt(row, 1);
+			if (iso.matches(Validaciones.ISO) == false){
+				mensaje("La ISO es solo de 2 caracteres");
+			}else if (nom.matches(Validaciones.TEXTO) == false){
+				mensaje("El nombre es de 4 a 40 caracteres");
+			}else{
+					Pais obj = new Pais();
+					obj.setIdPais(idSeleccionado);
+					obj.setIso(iso);
+					obj.setNombre(nom);
+					
+					PaisModel model = new PaisModel();
+					int salida = model.actualizaPais(obj);
+					if (salida>0) {
+						limpiarCajasTexto();
+						listaPais();
+						idSeleccionado = -1;
+						mensaje("Se actualizo correctamente");
+						}else {
+						mensaje("Error al actualizar");
+						}
+			}
+		}
+		
+	}
+	protected void actionPerformedBtnEliminarJButton(ActionEvent e) {
+		if (idSeleccionado == -1) {
+			mensaje("Debe seleccionar una fila");
+		}else {
+			PaisModel m = new PaisModel();
+			int s = m.eliminaPais(idSeleccionado);
+			if ( s > 0) {
+				listaPais();;
+				limpiarCajasTexto();
+				idSeleccionado = -1;
+				mensaje("Se eliminó correctamente");
+			}else {
+				mensaje("Error al eliminar");
+			}
+		}
+	}
+	public void mouseClicked(MouseEvent e) {
+		if (e.getSource() == table) {
+			mouseClickedTableJTable(e);
+		}
+	}
+	public void mouseEntered(MouseEvent e) {
+	}
+	public void mouseExited(MouseEvent e) {
+	}
+	public void mousePressed(MouseEvent e) {
+	}
+	public void mouseReleased(MouseEvent e) {
+	}
+	protected void mouseClickedTableJTable(MouseEvent e) {
+		int fila = table.getSelectedRow();
+		
+		idSeleccionado = (Integer)table.getValueAt(fila, 0);
+		String iso = (String)table.getValueAt(fila, 1);
+		String nom = (String)table.getValueAt(fila, 2);
+		
+		txtIso.setText(iso);
+		txtNombre.setText(nom);
 
-txtPais.setText(pais);
+	}
+	void listaPais() {
+		PaisModel m = new PaisModel();
+		List<Pais> data = m.listaPais();
 
-}
-void message(String message) {
-JOptionPane.showMessageDialog(this, message);
-}
-void clearInputs() {
-txtPais.setText("");
-txtPais.requestFocus();
-}
-void listarPais() {
-DefaultTableModel tableModel = (DefaultTableModel)
-table.getModel();
-tableModel.setRowCount(0);
-ModelPais PaisModel = new ModelPais();
-List<Pais> Paises = PaisModel.listaPais();
-for (Pais Pais : Paises) {
-Object[] row = { Pais.getIdPais(),
-Pais.getPais() };
-tableModel.addRow(row);
-}
-}
+		// Se accede a la jtable de la GUI
+		DefaultTableModel dtm = (DefaultTableModel) table.getModel();
+		// Se coloca a sero las filas
+		dtm.setRowCount(0);
+
+		// Se agregan los campeonatos al jtable
+		for (Pais aux : data) {
+			Object[] fila = { aux.getIdPais(), aux.getIso(), aux.getNombre() };
+			dtm.addRow(fila);
+		}
+	}
+
+	void mensaje(String m) {
+		JOptionPane.showMessageDialog(this, m);
+	}
+
+	void limpiarCajasTexto() {
+		txtIso.setText("");
+		txtNombre.setText("");
+		txtIso.requestFocus();
+	}
 }

@@ -1,31 +1,27 @@
 package entidad;
 
 public class Pais {
-
-	private int idPais;
-	private String pais;
-	
+	private int idPais;;
+	private String iso;
+	private String nombre;
 	
 	public int getIdPais() {
 		return idPais;
 	}
-
 	public void setIdPais(int idPais) {
 		this.idPais = idPais;
 	}
-
-
-	public String getPais() {
-		return pais;
+	public String getIso() {
+		return iso;
 	}
-
-	public void setPais(String pais) {
-		this.pais = pais;
+	public void setIso(String iso) {
+		this.iso = iso;
 	}
-
-	public static void add(Pais p) {
-		// TODO Auto-generated method stub
-		
+	public String getNombre() {
+		return nombre;
 	}
-
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	
 }

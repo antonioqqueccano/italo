@@ -21,32 +21,58 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import entidad.Opcion;
+import gui.FrmConsultaPedido;
+import gui.FrmCosultaComprobante;
+import gui.FrmCrudPais;
 import gui.FrmCrudTipoReclamo;
-import model.ModelUsuario;
+import gui.FrmRegistraCliente;
+import gui.FrmRegistraComprobante;
+import gui.FrmRegistraPedido;
+import gui.FrmRegistraProducto;
+import model.UsuarioModel;
+import util.DatosGlobales;
 
 @SuppressWarnings("serial")
-public class FrmPrincipal extends JFrame implements WindowListener,
-		ActionListener {
+public class FrmPrincipal extends JFrame implements WindowListener, ActionListener {
 
 	private JDesktopPane desktop = new JDesktopPane();
 
-	//Paso 1: Agregar el formulario
-	private FrmCrudTipoReclamo  frmCrudTipoReclamo = new FrmCrudTipoReclamo(); 
-	
+	// Paso 1: Agregar el formulario
+
+	// Adminsitrativa
+	private FrmCrudTipoReclamo frmCrudTipoReclamo = new FrmCrudTipoReclamo();
+	private FrmCrudPais frmCrudPais = new FrmCrudPais();
+
+	// Negocio
+	private FrmRegistraPedido frmRegistraPedido = new FrmRegistraPedido();
+	private FrmRegistraCliente frmRegistraCliente = new FrmRegistraCliente();
+	private FrmRegistraComprobante frmRegistraComprobante = new FrmRegistraComprobante();
+	private FrmRegistraProducto frmRegistraProducto = new FrmRegistraProducto();
+
+	// Consulta
+	private FrmCosultaComprobante frmCosultaComprobante = new FrmCosultaComprobante();
+	private FrmConsultaPedido frmConsultaPedido = new FrmConsultaPedido();
+
 	private List<JMenuItem> listaItemMenus = new ArrayList<JMenuItem>();
 	private List<JMenu> listaMenus = new ArrayList<JMenu>();
-	private ModelUsuario model = new ModelUsuario();
+	private UsuarioModel model = new UsuarioModel();
 
-	//Agrega el item de menu
-	private JMenuItem mntmProveedor;
-	private JMenuItem mntmUsuario;
+	// Agrega el item de menu
+	// Administración
 	private JMenuItem mntmTipoReclamo;
 	private JMenuItem mntmPais;
-	private JMenuItem mntmMarca;
-	private JMenuItem mntmRol;
-	private JMenuItem mntmOpcion;
-	private JMenuItem mntmUbigeo;
-	
+
+
+	// Negocio
+	private JMenuItem mntmRegistroPedido;
+	private JMenuItem mntmRegistroCliente;
+	private JMenuItem mntmRegistroProducto;
+	private JMenuItem mntmRegistroComprobante;
+
+	// Consulta
+	private JMenuItem mntmConsultaPedido;
+	private JMenuItem mntmConsultaComprobante;
+
 	public FrmPrincipal(String cad, int x, int y) {
 		super(cad);
 		this.setLocation(0, 0);
@@ -72,20 +98,12 @@ public class FrmPrincipal extends JFrame implements WindowListener,
 		mnConsultas.setVisible(false);
 		menuBar.add(mnConsultas);
 
-		JMenu mnVentas = new JMenu("Ventas");
-		mnVentas.setVisible(false);
-		menuBar.add(mnVentas);
+		JMenu mnNegocio = new JMenu("Negocio");
+		mnNegocio.setVisible(false);
+		menuBar.add(mnNegocio);
 
-		mntmProveedor = new JMenuItem("Mantenimiento de proveedor");
-		mntmProveedor.setVisible(false);
-		mntmProveedor.addActionListener(this);
-		mnAdministracin.add(mntmProveedor);
-	
-		mntmUsuario = new JMenuItem("Mantenimiento de usuario");
-		mntmUsuario.setVisible(false);
-		mntmUsuario.addActionListener(this);
-		mnAdministracin.add(mntmUsuario);
-		
+		// Administrativa
+
 		mntmTipoReclamo = new JMenuItem("Mantenimiento de tipo de reclamo");
 		mntmTipoReclamo.setVisible(false);
 		mntmTipoReclamo.addActionListener(this);
@@ -96,51 +114,68 @@ public class FrmPrincipal extends JFrame implements WindowListener,
 		mntmPais.addActionListener(this);
 		mnAdministracin.add(mntmPais);
 
-		mntmMarca = new JMenuItem("Mantenimiento de marca");
-		mntmMarca.setVisible(false);
-		mntmMarca.addActionListener(this);
-		mnAdministracin.add(mntmMarca);
-		
-		mntmRol = new JMenuItem("Mantenimiento de rol");
-		mntmRol.setVisible(false);
-		mntmRol.addActionListener(this);
-		mnAdministracin.add(mntmRol);
-	
-		
-		mntmOpcion = new JMenuItem("Mantenimiento de opción");
-		mntmOpcion.setVisible(false);
-		mntmOpcion.addActionListener(this);
-		mnAdministracin.add(mntmOpcion);
-		
-		
-		mntmUbigeo = new JMenuItem("Mantenimiento de ubigeo");
-		mntmUbigeo.setVisible(false);
-		mntmUbigeo.addActionListener(this);
-		mnAdministracin.add(mntmUbigeo);
-		
-		//Paso 2: Se añade los menus a la lista
+		// Negocio
+		mntmRegistroPedido = new JMenuItem("Registro de pedido");
+		mntmRegistroPedido.setVisible(false);
+		mntmRegistroPedido.addActionListener(this);
+		mnNegocio.add(mntmRegistroPedido);
+
+		mntmRegistroComprobante = new JMenuItem("Registro de comprobante");
+		mntmRegistroComprobante.setVisible(false);
+		mntmRegistroComprobante.addActionListener(this);
+		mnNegocio.add(mntmRegistroComprobante);
+
+		mntmRegistroProducto = new JMenuItem("Registro de producto");
+		mntmRegistroProducto.setVisible(false);
+		mntmRegistroProducto.addActionListener(this);
+		mnNegocio.add(mntmRegistroProducto);
+
+		mntmRegistroCliente = new JMenuItem("Registro de cliente");
+		mntmRegistroCliente.setVisible(false);
+		mntmRegistroCliente.addActionListener(this);
+		mnNegocio.add(mntmRegistroCliente);
+
+		// Consultas
+		mntmConsultaPedido = new JMenuItem("Consulta de pedido");
+		mntmConsultaPedido.setVisible(false);
+		mntmConsultaPedido.addActionListener(this);
+		mnConsultas.add(mntmConsultaPedido);
+
+		mntmConsultaComprobante = new JMenuItem("Consulta de comprobante");
+		mntmConsultaComprobante.setVisible(false);
+		mntmConsultaComprobante.addActionListener(this);
+		mnConsultas.add(mntmConsultaComprobante);
+
+		// Paso 2: Se añade los menus a la lista
 		listaMenus.add(mnAdministracin);
 		listaMenus.add(mnConsultas);
-		listaMenus.add(mnVentas);
-		
-		//Paso 3: Se añade los items de menu a la lista
-		listaItemMenus.add(mntmProveedor);
-		listaItemMenus.add(mntmUsuario);
+		listaMenus.add(mnNegocio);
+
+		// Paso 3: Se añade los items de menu a la lista
 		listaItemMenus.add(mntmTipoReclamo);
 		listaItemMenus.add(mntmPais);
-		listaItemMenus.add(mntmMarca);
-		listaItemMenus.add(mntmRol);
-		listaItemMenus.add(mntmOpcion);
-		listaItemMenus.add(mntmUbigeo);
+		listaItemMenus.add(mntmRegistroPedido);
+		listaItemMenus.add(mntmRegistroComprobante);
+		listaItemMenus.add(mntmRegistroCliente);
+		listaItemMenus.add(mntmRegistroProducto);
+		listaItemMenus.add(mntmConsultaComprobante);
+		listaItemMenus.add(mntmConsultaPedido);
 
-		//Paso 4: Se los formularios al contenedor
+		// Paso 4: Se los formularios al contenedor
 		desktop.add(frmCrudTipoReclamo);
+		desktop.add(frmCrudPais);
+		desktop.add(frmRegistraPedido);
+		desktop.add(frmRegistraComprobante);
+		desktop.add(frmRegistraCliente);
+		desktop.add(frmRegistraProducto);
+		desktop.add(frmConsultaPedido);
+		desktop.add(frmCosultaComprobante);
 	}
 
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel("com.jtattoo.plaf.aero.AeroLookAndFeel");
-			
+
 			FrmPrincipal jf = new FrmPrincipal("Sistema de Delivery", 900, 600);
 			jf.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			jf.setVisible(false);
@@ -157,7 +192,8 @@ public class FrmPrincipal extends JFrame implements WindowListener,
 	}
 
 	public void windowClosing(WindowEvent e) {
-		int n = JOptionPane.showConfirmDialog(e.getWindow(),"¿Desea cerrar la aplicación?","Confirmación",JOptionPane.YES_NO_OPTION);
+		int n = JOptionPane.showConfirmDialog(e.getWindow(), "¿Desea cerrar la aplicación?", "Confirmación",
+				JOptionPane.YES_NO_OPTION);
 		if (n == JOptionPane.YES_OPTION) {
 			System.exit(0);
 		}
@@ -179,37 +215,43 @@ public class FrmPrincipal extends JFrame implements WindowListener,
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
-		if (arg0.getSource() == mntmProveedor) {
-		
-		}
-		if (arg0.getSource() == mntmUsuario) {
-		
-		}
 		if (arg0.getSource() == mntmTipoReclamo) {
 			centrar(frmCrudTipoReclamo);
 			frmCrudTipoReclamo.setVisible(true);
 		}
 		if (arg0.getSource() == mntmPais) {
-			
+			centrar(frmCrudPais);
+			frmCrudPais.setVisible(true);
 		}
-		if (arg0.getSource() == mntmMarca) {
-			
+		if (arg0.getSource() == mntmRegistroPedido) {
+			centrar(frmRegistraPedido);
+			frmRegistraPedido.setVisible(true);
 		}
-		if (arg0.getSource() == mntmRol) {
-			
+		if (arg0.getSource() == mntmRegistroProducto) {
+			centrar(frmRegistraProducto);
+			frmRegistraProducto.setVisible(true);
 		}
-		if (arg0.getSource() == mntmOpcion) {
-			
+		if (arg0.getSource() == mntmRegistroCliente) {
+			centrar(frmRegistraCliente);
+			frmRegistraCliente.setVisible(true);
 		}
-		if (arg0.getSource() == mntmUbigeo) {
-			
+		if (arg0.getSource() == mntmRegistroComprobante) {
+			centrar(frmRegistraComprobante);
+			frmRegistraComprobante.setVisible(true);
+		}
+		if (arg0.getSource() == mntmConsultaComprobante) {
+			centrar(frmCosultaComprobante);
+			frmCosultaComprobante.setVisible(true);
+		}
+		if (arg0.getSource() == mntmConsultaPedido) {
+			centrar(frmConsultaPedido);
+			frmConsultaPedido.setVisible(true);
 		}
 	}
-	
-	
+
 	public void muestraOpciones() {
 		// Mostrar los items
-		List<Opcion> data = model.obtieneOpciones(FrmLogin.idUsuario);
+		List<Opcion> data = model.obtieneOpciones(DatosGlobales.ID_USUARIO);
 		for (Opcion aux : data) {
 			for (JMenuItem aux2 : listaItemMenus) {
 				if (aux.getNombre().equalsIgnoreCase(aux2.getText())) {
@@ -243,6 +285,4 @@ public class FrmPrincipal extends JFrame implements WindowListener,
 		frm.setLocation(posX, 80);
 	}
 
-	
 }
-

@@ -6,11 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import entidad.Opcion;
 import entidad.Usuario;
 import util.MySqlDBConexion;
 
-public class ModelUsuario {
+public class UsuarioModel {
+
 	public Usuario valida(String login, String clave) {
 		Usuario bean = null;
 		Connection conn = null;
@@ -48,16 +50,22 @@ public class ModelUsuario {
 		int response = -1;
 		Connection conn = null;
 		PreparedStatement ps = null;
+
 		try {
 			conn = MySqlDBConexion.getConexion();
+
 			String query = "insert into usuario values (null, ?, ?, ?, ?, ?)";
+
 			ps = conn.prepareStatement(query);
+
 			ps.setString(1, usuario.getNombre());
 			ps.setString(2, usuario.getApellido());
 			ps.setString(3, usuario.getDni());
 			ps.setString(4, usuario.getLogin());
 			ps.setString(5, usuario.getPassword());
+
 			response = ps.executeUpdate();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -70,6 +78,7 @@ public class ModelUsuario {
 				e.printStackTrace();
 			}
 		}
+
 		System.out.println(response);
 		return response;
 	}
@@ -81,7 +90,7 @@ public class ModelUsuario {
 		PreparedStatement pstm = null;
 		try {
 			conn = MySqlDBConexion.getConexion();
-			String sql = "select p.idopcion, p.nombre from opcion pinner join rol_has_opcion r on p.idopcion = r.idopcion inner join rol c onr.idrol = c.idrol inner join usuario_has_rol h on c.idrol = h.idrol whereidusuario = ? order by 2;";
+			String sql = "select p.idopcion, p.nombre  from opcion p inner join rol_has_opcion r on p.idopcion = r.idopcion inner join rol c on r.idrol = c.idrol inner join usuario_has_rol h on c.idrol = h.idrol where idusuario = ? order by 2;";
 			pstm = conn.prepareStatement(sql);
 			pstm.setInt(1, idUsuario);
 			System.out.println(pstm);
@@ -114,7 +123,9 @@ public class ModelUsuario {
 			conn = MySqlDBConexion.getConexion();
 			String sql = "select * from usuario";
 			ps = conn.prepareStatement(sql);
+
 			rs = ps.executeQuery();
+
 			Usuario u = null;
 			while (rs.next()) {
 				u = new Usuario();
@@ -125,7 +136,9 @@ public class ModelUsuario {
 				u.setLogin(rs.getString("login"));
 				u.setPassword(rs.getString("password"));
 				usuario.add(u);
+
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -140,15 +153,15 @@ public class ModelUsuario {
 		}
 		return usuario;
 	}
+//
 
-	//
 	public int actualizarUsuario(Usuario usuario) {
 		int response = -1;
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
 			conn = MySqlDBConexion.getConexion();
-			String query = "UPDATE usuario SET nombre=?, apellido=?,dni=?, login=?, password=? where idusuario=?";
+			String query = "UPDATE usuario SET nombre=?, apellido=?, dni=?, login=?, password=? where idusuario=?";
 			ps = conn.prepareStatement(query);
 			ps.setString(1, usuario.getNombre());
 			ps.setString(2, usuario.getApellido());
@@ -157,7 +170,7 @@ public class ModelUsuario {
 			ps.setString(5, usuario.getPassword());
 			ps.setInt(6, usuario.getIdUsuario());
 			response = ps.executeUpdate();
-			System.out.println("actualizados : " + response);
+			System.out.println("actualizados :  " + response);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -177,13 +190,14 @@ public class ModelUsuario {
 		int response = -1;
 		Connection conn = null;
 		PreparedStatement ps = null;
+
 		try {
 			conn = MySqlDBConexion.getConexion();
 			String query = "DELETE FROM usuario WHERE idusuario=?";
 			ps = conn.prepareStatement(query);
 			ps.setInt(1, idUsuario);
 			response = ps.executeUpdate();
-			System.out.println("eliminados : " + response);
+			System.out.println("eliminados :  " + response);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
