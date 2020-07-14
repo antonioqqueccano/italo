@@ -11,7 +11,7 @@ public class FrmConsultaPedido extends JInternalFrame{
 	private static final long serialVersionUID = 4052159725423283753L;
 	
 	public FrmConsultaPedido() {
-		setTitle("Consulta Pedido");
+		setTitle("Consulta de pedido");
 		setVisible(false);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setClosable(true);

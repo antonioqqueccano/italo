@@ -11,7 +11,7 @@ public class FrmRegistraComprobante extends JInternalFrame{
 	private static final long serialVersionUID = 4052159725423283753L;
 	
 	public FrmRegistraComprobante() {
-		setTitle("Registro Comprobante");
+		setTitle("Registro de comprobante");
 		setVisible(false);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setClosable(true);

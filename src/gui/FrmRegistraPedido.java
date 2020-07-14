@@ -11,7 +11,7 @@ public class FrmRegistraPedido extends JInternalFrame{
 	private static final long serialVersionUID = 4052159725423283753L;
 	
 	public FrmRegistraPedido() {
-		setTitle("Registro Pedido");
+		setTitle("Registro de pedido");
 		setVisible(false);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setClosable(true);
