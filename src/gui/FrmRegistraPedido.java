@@ -1,11 +1,15 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.sql.DriverManager;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
@@ -23,12 +27,22 @@ import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.mysql.jdbc.Statement;
+
 import componentes.JComboBoxBD;
+import entidad.Cliente;
 import entidad.Comprobante;
 import entidad.ComprobanteDetalle;
-import entidad.Cliente;
+import entidad.Pedido;
+import entidad.TipoReclamo;
 import entidad.Usuario;
 import model.ModelComprobante;
+import model.TipoReclamoModel;
+import util.Validaciones;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+
+
 
 
 @SuppressWarnings("serial")
@@ -53,9 +67,9 @@ public class FrmRegistraPedido extends JInternalFrame{
 	private JTextField txtPrecio;
 	private JLabel jLabel4;
 	
-	private JLabel lblIGVSalidas;
-	private JLabel lblTotalSalidas;
-	private JLabel lblSubTotalSalidas;
+	private JLabel SubTotal;
+	private JLabel Total;
+	private JLabel Igv;
 
 	
 	
@@ -63,12 +77,32 @@ public class FrmRegistraPedido extends JInternalFrame{
 	private static final long serialVersionUID = 4052159725423283753L;
 
 	ModelComprobante model = new ModelComprobante();
+	private JTextField txtFecEn;
+	private JTextField txtLugEnt;
+	private JComboBox<String> cboEstado;
+	private JLabel lblNewLabel_2;
+	private int idCliente =-1;
+	
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					FrmRegistraPedido frame = new FrmRegistraPedido();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	
 	
 	public FrmRegistraPedido() {
 		this.setTitle("Registro de pedido");
 		this.setVisible(false);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		this.setBounds(100, 100, 606, 617);
+		this.setBounds(100, 100, 896, 617);
 		this.setClosable(true);
 		this.setMaximizable(true);
 		this.setIconifiable(true);
@@ -83,7 +117,7 @@ public class FrmRegistraPedido extends JInternalFrame{
 
 	 	jPanel2 = new JPanel();
 	 	getContentPane().add(jPanel2);
-	 	jPanel2.setBounds(19, 86, 568, 449);
+	 	jPanel2.setBounds(10, 85, 860, 449);
 	 	jPanel2.setLayout(null);
 	 	jPanel2.setBorder(BorderFactory.createTitledBorder(null, "Detalle", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION, null, new java.awt.Color(0,0,255)));
 
@@ -100,7 +134,7 @@ public class FrmRegistraPedido extends JInternalFrame{
 	 	btnCancelarBoleta = new JButton();
 	 	getContentPane().add(btnCancelarBoleta);
 	 	btnCancelarBoleta.setText("Cancelar");
-	 	btnCancelarBoleta.setBounds(298, 546, 289, 30);
+	 	btnCancelarBoleta.setBounds(529, 546, 289, 30);
 	 	btnCancelarBoleta.addActionListener(new ActionListener() {
 	 		public void actionPerformed(ActionEvent evt) {
 	 			btnCancelarBoletaActionPerformed(evt);
@@ -115,7 +149,7 @@ public class FrmRegistraPedido extends JInternalFrame{
 	 	
 	 	cboProducto = new JComboBoxBD(rb.getString("SQL_COMBO_PRODUCTO"));
 	 	jPanel2.add(cboProducto);
-	 	cboProducto.setBounds(193, 30, 211, 23);
+	 	cboProducto.setBounds(105, 30, 211, 23);
 	 	cboProducto.addActionListener(new ActionListener() {
 	 		public void actionPerformed(ActionEvent evt) {
 	 			cboProductoActionPerformed(evt);
@@ -130,51 +164,11 @@ public class FrmRegistraPedido extends JInternalFrame{
 
 	 	txtCantidad = new JTextField();
 	 	jPanel2.add(txtCantidad);
-	 	txtCantidad.setBounds(193, 64, 211, 23);
-
-	 	btnAgregar = new JButton();
-	 	jPanel2.add(btnAgregar);
-	 	btnAgregar.setText("Agregar");
-	 	btnAgregar.setBounds(442, 23, 99, 30);
-	 	btnAgregar.addActionListener(new ActionListener() {
-	 		public void actionPerformed(ActionEvent evt) {
-	 			btnAgregarActionPerformed(evt);
-	 		}
-	 	});
-
-	 	btnEliminar = new JButton();
-	 	jPanel2.add(btnEliminar);
-	 	btnEliminar.setText("Eliminar");
-	 	btnEliminar.setBounds(442, 64, 99, 31);
-	 	btnEliminar.addActionListener(new ActionListener() {
-	 		public void actionPerformed(ActionEvent evt) {
-	 			btnEliminarActionPerformed(evt);
-	 		}
-	 	});
-
-	 	btnActualizar = new JButton();
-	 	jPanel2.add(btnActualizar);
-	 	btnActualizar.setText("Actualizar");
-	 	btnActualizar.setBounds(442, 106, 99, 32);
-	 	btnActualizar.addActionListener(new ActionListener() {
-	 		public void actionPerformed(ActionEvent evt) {
-	 			btnActualizarActionPerformed(evt);
-	 		}
-	 	});
-
-	 	btnLimpiar = new JButton();
-	 	jPanel2.add(btnLimpiar);
-	 	btnLimpiar.setText("Limpiar");
-	 	btnLimpiar.setBounds(442, 149, 99, 29);
-	 	btnLimpiar.addActionListener(new ActionListener() {
-	 		public void actionPerformed(ActionEvent evt) {
-	 			btnLimpiarActionPerformed(evt);
-	 		}
-	 	});
+	 	txtCantidad.setBounds(105, 65, 211, 23);
 
 	 	jScrollPane1 = new JScrollPane();
 	 	jPanel2.add(jScrollPane1);
-	 	jScrollPane1.setBounds(29, 188, 512, 136);
+	 	jScrollPane1.setBounds(10, 208, 840, 136);
 
 	 	jLabel4 = new JLabel();
 	 	jPanel2.add(jLabel4);
@@ -183,12 +177,12 @@ public class FrmRegistraPedido extends JInternalFrame{
 
 	 	txtPrecio = new JTextField();
 	 	jPanel2.add(txtPrecio);
-	 	txtPrecio.setBounds(193, 98, 211, 23);
+	 	txtPrecio.setBounds(105, 98, 211, 23);
 
 	 	 jTable1Model = 
 	 			new DefaultTableModel(
 	 					new String[][] { },
-	 					new String[] { "ID","Producto", "Cantidad", "Precio", "Subtotal" }){
+	 					new String[] { "ID","Producto", "Cantidad", "Precio","entrega","Lugar de entrega","estado", "Subtotal" }){
 	 		 
 	 		 @Override
 	 		public boolean isCellEditable(int row, int column) {
@@ -203,44 +197,111 @@ public class FrmRegistraPedido extends JInternalFrame{
 	 	jTable1.setModel(jTable1Model);
 	 	
 	 	JLabel lblTotal = new JLabel("Sub Total");
-	 	lblTotal.setBounds(317, 349, 104, 26);
+	 	lblTotal.setBounds(522, 378, 104, 26);
 	 	jPanel2.add(lblTotal);
 	 	
 	 	JLabel lblIgv = new JLabel("IGV");
-	 	lblIgv.setBounds(317, 378, 104, 26);
+	 	lblIgv.setBounds(631, 378, 104, 26);
 	 	jPanel2.add(lblIgv);
 	 	
 	 	JLabel lblTotal_1 = new JLabel("Total");
-	 	lblTotal_1.setBounds(317, 406, 104, 26);
+	 	lblTotal_1.setBounds(751, 378, 104, 26);
 	 	jPanel2.add(lblTotal_1);
 	 	
-	 	lblIGVSalidas = new JLabel("");
-	 	lblIGVSalidas.setFont(new Font("Tahoma", Font.BOLD, 11));
-	 	lblIGVSalidas.setHorizontalAlignment(SwingConstants.CENTER);
-	 	lblIGVSalidas.setOpaque(true);
-	 	lblIGVSalidas.setBackground(Color.LIGHT_GRAY);
-	 	lblIGVSalidas.setBounds(442, 378, 99, 26);
-	 	jPanel2.add(lblIGVSalidas);
+	 	SubTotal = new JLabel("");
+	 	SubTotal.setFont(new Font("Tahoma", Font.BOLD, 11));
+	 	SubTotal.setHorizontalAlignment(SwingConstants.CENTER);
+	 	SubTotal.setOpaque(true);
+	 	SubTotal.setBackground(Color.LIGHT_GRAY);
+	 	SubTotal.setBounds(522, 406, 99, 26);
+	 	jPanel2.add(SubTotal);
 	 	
-	 	lblSubTotalSalidas = new JLabel("");
-	 	lblSubTotalSalidas.setFont(new Font("Tahoma", Font.BOLD, 11));
-	 	lblSubTotalSalidas.setHorizontalAlignment(SwingConstants.CENTER);
-	 	lblSubTotalSalidas.setOpaque(true);
-	 	lblSubTotalSalidas.setBackground(Color.LIGHT_GRAY);
-	 	lblSubTotalSalidas.setBounds(442, 350, 99, 26);
-	 	jPanel2.add(lblSubTotalSalidas);
+	 	Igv = new JLabel("");
+	 	Igv.setFont(new Font("Tahoma", Font.BOLD, 11));
+	 	Igv.setHorizontalAlignment(SwingConstants.CENTER);
+	 	Igv.setOpaque(true);
+	 	Igv.setBackground(Color.LIGHT_GRAY);
+	 	Igv.setBounds(631, 406, 99, 26);
+	 	jPanel2.add(Igv);
 	 	
-	 	lblTotalSalidas = new JLabel("");
-	 	lblTotalSalidas.setFont(new Font("Tahoma", Font.BOLD, 11));
-	 	lblTotalSalidas.setHorizontalAlignment(SwingConstants.CENTER);
-	 	lblTotalSalidas.setOpaque(true);
-	 	lblTotalSalidas.setBackground(Color.LIGHT_GRAY);
-	 	lblTotalSalidas.setBounds(442, 406, 99, 26);
-	 	jPanel2.add(lblTotalSalidas);
+	 	Total = new JLabel("");
+	 	Total.setFont(new Font("Tahoma", Font.BOLD, 11));
+	 	Total.setHorizontalAlignment(SwingConstants.CENTER);
+	 	Total.setOpaque(true);
+	 	Total.setBackground(Color.LIGHT_GRAY);
+	 	Total.setBounds(751, 406, 99, 26);
+	 	jPanel2.add(Total);
 	 	
 	 	JTextArea textArea = new JTextArea();
 	 	textArea.setBounds(238, 29, 4, 22);
 	 	jPanel2.add(textArea);
+	 	
+	 		 	btnLimpiar = new JButton();
+	 		 	btnLimpiar.setBounds(673, 108, 99, 29);
+	 		 	jPanel2.add(btnLimpiar);
+	 		 	btnLimpiar.setText("Limpiar");
+	 		 	
+	 		 		 	btnActualizar = new JButton();
+	 		 		 	btnActualizar.setBounds(673, 42, 99, 32);
+	 		 		 	jPanel2.add(btnActualizar);
+	 		 		 	btnActualizar.setText("Actualizar");
+	 		 		 	
+	 		 		 		 	btnEliminar = new JButton();
+	 		 		 		 	btnEliminar.setBounds(673, 11, 99, 31);
+	 		 		 		 	jPanel2.add(btnEliminar);
+	 		 		 		 	btnEliminar.setText("Eliminar");
+	 		 		 		 	
+	 		 		 		 		 	btnAgregar = new JButton();
+	 		 		 		 		 	btnAgregar.setBounds(673, 76, 99, 30);
+	 		 		 		 		 	jPanel2.add(btnAgregar);
+	 		 		 		 		 	btnAgregar.setText("Agregar");
+	 		 		 		 		 	
+	 		 		 		 		 	JLabel lblNewLabel = new JLabel("fecha de entrega");
+	 		 		 		 		 	lblNewLabel.setBounds(343, 34, 96, 14);
+	 		 		 		 		 	jPanel2.add(lblNewLabel);
+	 		 		 		 		 	
+	 		 		 		 		 	txtFecEn = new JTextField();
+	 		 		 		 		 	txtFecEn.setBounds(442, 31, 155, 20);
+	 		 		 		 		 	jPanel2.add(txtFecEn);
+	 		 		 		 		 	txtFecEn.setColumns(10);
+	 		 		 		 		 	
+	 		 		 		 		 	JLabel lblNewLabel_1 = new JLabel("Lugar entrega\r\n");
+	 		 		 		 		 	lblNewLabel_1.setBounds(343, 69, 96, 14);
+	 		 		 		 		 	jPanel2.add(lblNewLabel_1);
+	 		 		 		 		 	
+	 		 		 		 		 	txtLugEnt = new JTextField();
+	 		 		 		 		 	txtLugEnt.setBounds(442, 66, 155, 20);
+	 		 		 		 		 	jPanel2.add(txtLugEnt);
+	 		 		 		 		 	txtLugEnt.setColumns(10);
+	 		 		 		 		 	
+	 		 		 		 		 	cboEstado = new JComboBox<String>();
+	 		 		 		 		 	cboEstado.setModel(new DefaultComboBoxModel(new String[] {"[Seleccione]", "ACTIVO", "INACTIVO"}));
+	 		 		 		 		 	cboEstado.setBounds(442, 99, 155, 20);
+	 		 		 		 		 	jPanel2.add(cboEstado);
+	 		 		 		 		 	
+	 		 		 		 		 	lblNewLabel_2 = new JLabel("Estado\r\n");
+	 		 		 		 		 	lblNewLabel_2.setBounds(343, 102, 46, 14);
+	 		 		 		 		 	jPanel2.add(lblNewLabel_2);
+	 		 		 		 		 	btnAgregar.addActionListener(new ActionListener() {
+	 		 		 		 		 		public void actionPerformed(ActionEvent evt) {
+	 		 		 		 		 			btnAgregarActionPerformed(evt);
+	 		 		 		 		 		}
+	 		 		 		 		 	});
+	 		 		 		 	btnEliminar.addActionListener(new ActionListener() {
+	 		 		 		 		public void actionPerformed(ActionEvent evt) {
+	 		 		 		 			btnEliminarActionPerformed(evt);
+	 		 		 		 		}
+	 		 		 		 	});
+	 		 		 	btnActualizar.addActionListener(new ActionListener() {
+	 		 		 		public void actionPerformed(ActionEvent evt) {
+	 		 		 			btnActualizarActionPerformed(evt);
+	 		 		 		}
+	 		 		 	});
+	 		 	btnLimpiar.addActionListener(new ActionListener() {
+	 		 		public void actionPerformed(ActionEvent evt) {
+	 		 			btnLimpiarActionPerformed(evt);
+	 		 		}
+	 		 	});
 	 
 	 	
 	 	jLabel1 = new JLabel();
@@ -264,8 +325,7 @@ public class FrmRegistraPedido extends JInternalFrame{
 			txtPrecio.setText(sep[2]);
 		}
 	}
-	
-	
+
 	private void btnAgregarActionPerformed(ActionEvent evt) {
 			if(cboProducto.getSelectedIndex() ==0){
 				JOptionPane.showMessageDialog(this, "Seleccione un producto");
@@ -278,15 +338,31 @@ public class FrmRegistraPedido extends JInternalFrame{
 			if(!txtPrecio.getText().trim().matches("(\\d+.\\d{1})|(\\d+)")){
 				JOptionPane.showMessageDialog(this, "El precio es ##.# ó ##");
 				return;
-			}
+			}if(!txtFecEn.getText().trim().matches(Validaciones.FECHA)){
+				JOptionPane.showMessageDialog(this, "fecha:yyyy-mm-dd");
+				return;
+			}if(!txtLugEnt.getText().trim().matches(Validaciones.TEXTO)){
+				JOptionPane.showMessageDialog(this, "Colocar lugar de entrega");
+				return;
+			}if(cboEstado.getSelectedIndex() ==0){
+				JOptionPane.showMessageDialog(this, "Seleccione el estado");
+				return;}
 			
-			String Pro = cboProducto.getSelectedItem().toString().trim();			
+			
+			String Pro = cboProducto.getSelectedItem().toString().trim();
 			int cantidad = Integer.parseInt(txtCantidad.getText().trim());
-			double precio = Double.parseDouble(txtPrecio.getText().trim());   
+			double precio = Double.parseDouble(txtPrecio.getText().trim());
+			String fecEnt= txtFecEn.getText().trim();
+		    String lugEnt=txtLugEnt.getText().trim();
+		    String est=cboEstado.getSelectedItem().toString().trim();
+			
+			
 
 	
 			String idProducto = Pro.split(":")[0];
 			String nombre = Pro.split(":")[1];
+			
+			
 			
 		
 			String idAux = null;
@@ -300,13 +376,13 @@ public class FrmRegistraPedido extends JInternalFrame{
 			}
 		
 			if(noExiste){
-				Object[] fila = {idProducto, nombre, cantidad, precio, cantidad*precio};
+				Object[] fila = {idProducto, nombre, cantidad, precio,fecEnt,lugEnt,est, cantidad*precio};
 				jTable1Model.addRow(fila);
 			}else{
 				JOptionPane.showMessageDialog(this, "El producto ya ha sido seleccionado"); 
 			}
 			
-			calculaTotales();
+			calculaTotal();
 
 	}
 	
@@ -316,7 +392,7 @@ public class FrmRegistraPedido extends JInternalFrame{
 			JOptionPane.showMessageDialog(this, "Debe seleccionar una fila");
 		}else{
 			jTable1Model.removeRow(fila);
-			calculaTotales();
+			calculaTotal();
 		}
 	}
 	
@@ -332,12 +408,24 @@ public class FrmRegistraPedido extends JInternalFrame{
 		if(!txtPrecio.getText().trim().matches("(\\d+.\\d{1})|(\\d+)")){
 			JOptionPane.showMessageDialog(this, "El precio es ##.# ó ##");
 			return;
+		}if(!txtFecEn.getText().trim().matches(Validaciones.FECHA)){
+			JOptionPane.showMessageDialog(this, "fecha:yyyy-mm-dd");
+			return;
+		}if(!txtLugEnt.getText().trim().matches(Validaciones.TEXTO)){
+			JOptionPane.showMessageDialog(this, "Colocar lugar de entrega");
+			return;
 		}
+		
 		String prod = cboProducto.getSelectedItem().toString().trim();			
 		int cantidad = Integer.parseInt(txtCantidad.getText().trim());
-		double precio = Double.parseDouble(txtPrecio.getText().trim());   
+		double precio = Double.parseDouble(txtPrecio.getText().trim()); 
+		String fecEnt= txtFecEn.getText().trim();
+	    String lugEnt=txtLugEnt.getText().trim();
+		
 		
 		String idProducto = prod.split(":")[0];
+		
+		
 		
 		String idAux = null;
 		for (int i = 0; i < jTable1Model.getRowCount(); i++) {
@@ -345,14 +433,18 @@ public class FrmRegistraPedido extends JInternalFrame{
 			if(idAux.equals(idProducto)){
 				jTable1Model.setValueAt(cantidad, i, 2);
 				jTable1Model.setValueAt(precio, i, 3);
-				jTable1Model.setValueAt(precio*cantidad, i, 4);
+				jTable1Model.setValueAt(fecEnt, i, 4);
+				jTable1Model.setValueAt(lugEnt, i, 5);
+				jTable1Model.setValueAt(precio*cantidad, i, 6);
+				
 			}
-		}
+			calculaTotal();
+		}}
 		
-		calculaTotales();
-	}
+		
 	
-	public void calculaTotales(){
+	
+	public void calculaTotal(){
 		double subTotal = 0;
 		for (int i = 0; i < jTable1Model.getRowCount(); i++) {
 			subTotal+= (Double)jTable1Model.getValueAt(i, 4);
@@ -363,9 +455,9 @@ public class FrmRegistraPedido extends JInternalFrame{
 		
 		DecimalFormat df = new DecimalFormat("#.##");
 		
-		lblSubTotalSalidas.setText(df.format(subTotal));
-		lblIGVSalidas.setText(df.format(igv));
-		lblTotalSalidas.setText(df.format(total));
+		Igv.setText(df.format(subTotal));
+		SubTotal.setText(df.format(igv));
+		Total.setText(df.format(total));
 	}	
 	
 	private void btnLimpiarActionPerformed(ActionEvent evt) {
@@ -374,63 +466,41 @@ public class FrmRegistraPedido extends JInternalFrame{
 	}
 	
 	private void btnRegistraBoletaActionPerformed(ActionEvent evt) {
-		
-		if(cboCliente.getSelectedIndex() ==0){
-			JOptionPane.showMessageDialog(this, "Seleccione un cliente");
-			return;
-		}
-		
-		if( jTable1Model.getRowCount() ==0){
-			JOptionPane.showMessageDialog(this, "No existe productos");
-			return;
-		}
-		
-	
-		String cliente = cboCliente.getSelectedItem().toString();
-		String[] sep = cliente.split(":");
-		int idCliente = Integer.parseInt(sep[0]);
-		
 
-		Cliente objCli = new Cliente();
-		objCli.setIdCliente(idCliente);
+		String fecEnt= txtFecEn.getText().trim();
+		String lugEnt=txtLugEnt.getText().trim();
+		int est = cboEstado.getSelectedIndex();
+		String estSel = cboEstado.getSelectedItem().toString();
+		int cli=cboCliente.getSelectedIndex();
+		
+		if(fecEnt.matches(Validaciones.FECHA)==false) {
+			JOptionPane.showMessageDialog(this, "fecha:yyyy-mm-dd");
+		}else if(lugEnt.matches(Validaciones.TEXTO)==false) {
+			JOptionPane.showMessageDialog(this, "Colocar lugar de entrega");
+		}else if (est == 0) {
+			JOptionPane.showMessageDialog(this,"Seleccione un estado");
+		} else {
+			Pedido obj = new Pedido();
+			obj.setFechaEntrega(fecEnt);
+			obj.setLugarEntrega(lugEnt);
+			obj.setEstado(estSel);
+			obj.setCliente(cli);
 
-		Usuario objUsu = new Usuario();
-		objUsu.setIdUsuario(1);
+			ModelComprobante m = new ModelComprobante();
+			int s = m.Registrar(obj);
+			if (s > 0) {
+				idCliente = -1;
+				limpiar();
+				JOptionPane.showMessageDialog(this, "Se registro corerctamente");
+				
+			} else {
+				JOptionPane.showMessageDialog(this, "error al registrar");
+			}
 		
-	
-		ComprobanteDetalle aux = null;
-		ArrayList<ComprobanteDetalle> detalles = new ArrayList<ComprobanteDetalle>();
-		
-		for (int i = 0; i < jTable1Model.getRowCount(); i++) {
-			aux = new ComprobanteDetalle();
-			
-			String prod = jTable1Model.getValueAt(i, 1).toString();
-			aux.setIdProducto(Integer.parseInt(prod));
-		
-			String cant = jTable1Model.getValueAt(i, 2).toString();
-			aux.setCantidad(Integer.parseInt(cant));
-			
-			String precio = jTable1Model.getValueAt(i, 3).toString();
-			
-			aux.setPrecio(Double.parseDouble(precio));
-			
-			detalles.add(aux);
 		}
-		
-		
-		
-		Comprobante objBol = new Comprobante();
-		objBol.setUsuario(objUsu);
-		objBol.setCliente(objCli);
-		objBol.setDetalles(detalles);
-		
-		
-		model.inserta(objBol);
-		
-		
-		limpiar();
-		JOptionPane.showMessageDialog(this, "Se inserto correctamente");	
 	}
+		
+
 	
 	private void btnCancelarBoletaActionPerformed(ActionEvent evt) {
 		limpiar();
@@ -440,6 +510,8 @@ public class FrmRegistraPedido extends JInternalFrame{
 	void limpiarb() {
 		txtCantidad.setText("");
 		txtPrecio.setText("");
+		txtFecEn.setText("");
+		txtLugEnt.setText("");
 		cboProducto.setSelectedIndex(0);
 		cboCliente.setSelectedIndex(0);
 		cboCliente.requestFocus();
@@ -447,14 +519,16 @@ public class FrmRegistraPedido extends JInternalFrame{
 	void limpiar(){
 		txtCantidad.setText("");
 		txtPrecio.setText("");
+		txtFecEn.setText("");
+		txtLugEnt.setText("");
 		cboProducto.setSelectedIndex(0);
 		cboCliente.setSelectedIndex(0);
 		jTable1Model.setRowCount(0);
 		cboCliente.requestFocus();
 		
-		lblSubTotalSalidas.setText("");
-		lblIGVSalidas.setText("");
-		lblTotalSalidas.setText("");
+		Igv.setText("");
+		SubTotal.setText("");
+		Total.setText("");
 	}
 }
 
