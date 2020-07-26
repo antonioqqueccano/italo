@@ -236,14 +236,14 @@ public class FrmCrudTipoReclamo extends JInternalFrame implements ActionListener
 
 	void listaTipoReclamo() {
 		TipoReclamoModel m = new TipoReclamoModel();
-		List<TipoReclamo> data = m.listaTipoReclamo();
+		List<TipoReclamo> data = m.listaTipoReclamos();
 
 		// Se accede a la jtable de la GUI
 		DefaultTableModel dtm = (DefaultTableModel) table.getModel();
 		// Se coloca a sero las filas
 		dtm.setRowCount(0);
 
-		// Se agregan los campeonatos al jtable
+		
 		for (TipoReclamo aux : data) {
 			Object[] fila = { aux.getIdTipoReclamo(), aux.getDescripcion(), aux.getEstado(), aux.getFechaRegistro() };
 			dtm.addRow(fila);

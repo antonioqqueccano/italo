@@ -14,37 +14,7 @@ import entidad.Pedido;
 import util.MySqlDBConexion;
 
 public class ModelComprobante {
-	public int Registrar(Pedido p){
-		int salida = -1;
-		
-		Connection con = null;
-		PreparedStatement pstm  = null;
-		try{
-			
-			con = MySqlDBConexion.getConexion();
-			
-			//2 Se prepara el SQL
-			String sql = "insert into pedido values(null,null,?,?,?,?)";
-			pstm = con.prepareStatement(sql);
-			pstm.setString(2, p.getFechaEntrega());
-			pstm.setString(3, p.getLugarEntrega());
-			pstm.setString(4, p.getEstado());
-			pstm.setInt(5,p.getCliente());
-			
-			System.out.println("SQL-->" + pstm);
-			
-			//3 envia el sql y se recibe la cantidad de registrados
-			salida = pstm.executeUpdate();
-		}catch(Exception e){
-			e.printStackTrace();	
-		}finally{
-			try {
-				if(pstm!= null)pstm.close();
-				if(con!= null)con.close();
-			} catch (Exception e2) {}
-		}
-		return salida;
-	}
+	
 
 	
 	private static final Log log = LogFactory.getLog(ModelComprobante.class);

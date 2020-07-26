@@ -5,11 +5,11 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Date;
-import java.sql.DriverManager;
+
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
+
+
+
 import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
@@ -27,17 +27,16 @@ import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.mysql.jdbc.Statement;
 
 import componentes.JComboBoxBD;
-import entidad.Cliente;
-import entidad.Comprobante;
-import entidad.ComprobanteDetalle;
+
+
 import entidad.Pedido;
-import entidad.TipoReclamo;
-import entidad.Usuario;
-import model.ModelComprobante;
-import model.TipoReclamoModel;
+
+
+import model.Modelpedido;
+
+import util.MySqlDBConexion;
 import util.Validaciones;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
@@ -76,12 +75,12 @@ public class FrmRegistraPedido extends JInternalFrame{
 	private ResourceBundle rb = ResourceBundle.getBundle("combo");
 	private static final long serialVersionUID = 4052159725423283753L;
 
-	ModelComprobante model = new ModelComprobante();
+	Modelpedido model = new Modelpedido();
 	private JTextField txtFecEn;
 	private JTextField txtLugEnt;
 	private JComboBox<String> cboEstado;
 	private JLabel lblNewLabel_2;
-	private int idCliente =-1;
+	private int idCliente = -1;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -382,7 +381,19 @@ public class FrmRegistraPedido extends JInternalFrame{
 				JOptionPane.showMessageDialog(this, "El producto ya ha sido seleccionado"); 
 			}
 			
-			calculaTotal();
+			double subTotal = 0;
+			for (int i = 0; i < jTable1Model.getRowCount(); i++) {
+				subTotal+= (Double)jTable1Model.getValueAt(i, 4);
+			}
+			
+			double igv = 0.18 * subTotal;
+			double total = subTotal + igv;
+			
+			DecimalFormat df = new DecimalFormat("#.##");
+			
+			Igv.setText(df.format(subTotal));
+			SubTotal.setText(df.format(igv));
+			Total.setText(df.format(total));
 
 	}
 	
@@ -467,7 +478,9 @@ public class FrmRegistraPedido extends JInternalFrame{
 	
 	private void btnRegistraBoletaActionPerformed(ActionEvent evt) {
 
-		String fecEnt= txtFecEn.getText().trim();
+
+		
+		String fecEnt= txtFecEn.getText().toString();
 		String lugEnt=txtLugEnt.getText().trim();
 		int est = cboEstado.getSelectedIndex();
 		String estSel = cboEstado.getSelectedItem().toString();
@@ -485,13 +498,12 @@ public class FrmRegistraPedido extends JInternalFrame{
 			obj.setLugarEntrega(lugEnt);
 			obj.setEstado(estSel);
 			obj.setCliente(cli);
-
-			ModelComprobante m = new ModelComprobante();
-			int s = m.Registrar(obj);
-			if (s > 0) {
+			Modelpedido m = new Modelpedido();
+			int salida = m.RegistraPedido(obj);
+			if (salida > -1) {
 				idCliente = -1;
 				limpiar();
-				JOptionPane.showMessageDialog(this, "Se registro corerctamente");
+				JOptionPane.showMessageDialog(this, "Se registro correctamente");
 				
 			} else {
 				JOptionPane.showMessageDialog(this, "error al registrar");

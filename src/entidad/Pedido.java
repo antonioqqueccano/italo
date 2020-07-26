@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Pedido {
 
 	private int idPedido;
-	private String fechaEntrega;
+	private Date fechaEntrega;
 	private String lugarEntrega;
 	private String estado;
 	private int cliente;
@@ -16,10 +16,10 @@ public class Pedido {
 	public void setIdPedido(int idPedido) {
 		this.idPedido = idPedido;
 	}
-	public String getFechaEntrega() {
+	public Date getFechaEntrega() {
 		return fechaEntrega;
 	}
-	public void setFechaEntrega(String fechaEntrega) {
+	public void setFechaEntrega(Date fechaEntrega) {
 		this.fechaEntrega = fechaEntrega;
 	}
 	public String getLugarEntrega() {
@@ -61,6 +61,14 @@ public class Pedido {
 	private Ubigeo ubigeo;
 	private Usuario usuario;
 	private ArrayList<PedidoDetalle> detalles;
+	public void setfecEnt(String fecEnt) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void setFechaEntrega(String fecEnt) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 	

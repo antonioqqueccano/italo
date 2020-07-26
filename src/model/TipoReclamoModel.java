@@ -42,7 +42,7 @@ public class TipoReclamoModel {
 		return salida;
 	}
 	
-	public List<TipoReclamo> listaTipoReclamo() {
+	public List<TipoReclamo> listaTipoReclamos() {
 		ArrayList<TipoReclamo> data = new ArrayList<TipoReclamo>();
 		Connection con = null;
 		PreparedStatement pstm = null;
@@ -57,7 +57,8 @@ public class TipoReclamoModel {
 			rs = pstm.executeQuery();
 			
 			//Se pasa la data del rs al ArrayList(data)
-			TipoReclamo c = null;
+			TipoReclamo
+			c = null;
 			while(rs.next()){
 				c = new TipoReclamo();
 				c.setIdTipoReclamo(rs.getInt("idTipoReclamo"));
@@ -73,7 +74,7 @@ public class TipoReclamoModel {
 				if (pstm != null)pstm.close();
 				if (con != null)con.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				
 			}
 		}
 		return data;
